@@ -1,0 +1,5 @@
+cycle: 0; nbPreys: 200; minEnergyPreys: 2.776469564641504E-4; maxSizePreys: 0.9973480431915501; nbPredators: 20; minEnergyPredators: 0.002458130545659132; maxSizePredators: 0.9991923295972729
+cycle: 1; nbPreys: 186; minEnergyPreys: 0.052779140822641055; maxSizePreys: 1.0; nbPredators: 20; minEnergyPredators: 0.3483134365618641; maxSizePredators: 1.0
+cycle: 2; nbPreys: 176; minEnergyPreys: 0.10179874866577829; maxSizePreys: 1.0; nbPredators: 22; minEnergyPredators: 0.32831343656186407; maxSizePredators: 1.0
+cycle: 3; nbPreys: 168; minEnergyPreys: 0.15179874866577825; maxSizePreys: 1.0; nbPredators: 22; minEnergyPredators: 0.30831343656186405; maxSizePredators: 1.0
+cycle: 4; nbPreys: 156; minEnergyPreys: 0.20179874866577824; maxSizePreys: 1.0; nbPredators: 22; minEnergyPredators: 0.4646315204995193; maxSizePredators: 1.0

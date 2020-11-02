@@ -1,0 +1,135 @@
+/**
+* Name: Festival
+* Basic festival with stores and  guests seeking information 
+* Author: jessica&marco
+* Tags: 
+*/
+
+
+model Festival
+
+global {
+    int nb_guests_init <- 10;
+    
+    float guest_max_hunger <- 10.0;
+    float guest_max_thirst <- 10.0;
+    float guest_max_tired <- 10.0;
+    float tired <- 0.05;
+    float guest_hunger_consum <- 0.01;
+    float guest_thirst_consum <- 0.05;
+    float guest_tired_consum <- 0.005;
+    int nb_guests -> {length (FestivalGuest)};
+    
+    point informationPoint <- {rnd (25.0, 75.0), rnd (25.0, 75.0)};
+    
+    int info_range <- 2;
+    
+    init {
+    	create FestivalGuest number: nb_guests_init ;
+    	create FestivalStore number: 5 ;
+    	create FestivalInformationCenter number: 1 ;
+    }
+}
+
+species FestivalGuest skills:[moving]{
+	point targetPoint <- nil;
+	
+	
+    image_file my_icon <- image_file("../includes/images/guest.png");
+	
+    float max_hunger <- guest_max_hunger ;
+    float max_thirst <- guest_max_thirst ;
+    float max_tired <- guest_max_tired ;
+    float hunger_consum <- guest_hunger_consum ;
+    float thirst_consum <- guest_thirst_consum ;
+    float tired_consum <- guest_tired_consum ;
+    float size <- 1.0 ;
+    rgb color <- #blue;
+	
+	float hunger <- rnd(max_hunger) update: hunger + hunger_consum max: max_hunger ;
+	float thirst <- rnd(max_thirst) update: thirst + thirst_consum max: max_thirst ;
+	float tired <- rnd(max_tired) update: tired + tired_consum max: max_tired ;
+	
+	reflex beIdle when: targetPoint = nil{
+		do wander;
+	}
+	
+	reflex moveToTarget when: targetPoint != nil{
+		do goto target:targetPoint;
+	}
+	
+	/**reflex enterStore when: location distance_to(targetPoint) < 2{
+		// Do something here
+	}*/
+	
+	reflex moveToInformation when: (hunger >= 10 or thirst >= 10 or tired >= 10){
+		targetPoint <- informationPoint;
+	}
+        
+    aspect base {
+    	draw circle(size) color: color ;
+    }
+    
+    reflex die when: (hunger >= 10 and thirst >= 10 and tired >= 10) {
+    	do die ;
+    }
+} 
+
+species FestivalStore {
+    float size <- 1.0 ;
+    rgb color <- #red;
+    
+    int info_range <- 2;
+    
+    image_file my_icon <- image_file("../includes/images/guest.png");
+    
+    reflex fulfill when: !empty(FestivalGuest at_distance info_range){
+    	ask FestivalGuest at_distance info_range{
+    		if(self.targetPoint = myself.location){
+    			self.hunger <- self.hunger / 2;
+    			self.thirst <- self.thirst / 2;
+    			self.tired <- self.tired / 2;
+    			self.targetPoint <- nil;
+    		}
+    	}
+    }
+    
+    aspect base {
+    draw circle(size) color: color ;
+    }
+} 
+
+species FestivalInformationCenter {
+    float size <- 1.0 ;
+    rgb color <- #green;
+        
+    point location <- informationPoint;
+    
+    point storeLocation <- storeLocation;
+    
+    reflex inform when: !empty(FestivalGuest at_distance info_range){
+    	ask FestivalGuest at_distance info_range{
+    		if(self.targetPoint = myself.location){
+    			self.targetPoint <- storeLocation;
+    		}
+    	}
+    }
+    
+    aspect base {
+    draw circle(size) color: color ;
+    }
+} 
+
+experiment FestivalMain type: gui {
+	parameter "Initial number of guests: " var: nb_guests_init min: 1 max: 100 category: "FestivalGuest" ;
+	output {
+    	display main_display {
+        	species FestivalGuest aspect: base ;
+        	species FestivalStore aspect: base ;
+        	species FestivalInformationCenter aspect: base ;
+    	}
+    	monitor "Number of guests" value: nb_guests ;
+	}
+	
+}
+
